@@ -31,14 +31,17 @@ async function addMarker(job) {
   if (data.features && data.features.length > 0) {
     const lngLat = data.features[0].center;
 
-    const popup = new mapboxgl.Popup()
-      .setHTML(`
-        <h5><a href="${job.url}" target="_blank">${job.position}</a></h5>
-        <p>Organization: ${job.organization}</p>
-        <p>Location: ${job.location}</p>
-        <p>Opened: ${job.opened}</p>
-        <p>Closes: ${job.closes}</p>
-      `);
+    // ...
+const popup = new mapboxgl.Popup()
+.setHTML(`
+  <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
+  <p>Organization: ${job.organization}</p>
+  <p>Location: ${job.location}</p>
+  <p>Opened: ${job.opened}</p>
+  <p>Closes: ${job.closes}</p>
+`);
+// ...
+
 
     const marker = new mapboxgl.Marker()
       .setLngLat(lngLat)
@@ -83,9 +86,9 @@ function filterJobsByProvince(jobs, provinces) {
  function filterJobsByType(jobs, types) {
   return jobs.filter(job => {
     const org = job.organization.toLowerCase();
-    const isAcademic = /university|college|université|universite/.test(org);
-    const isPublic = /public/.test(org);
-    const isOther = !isAcademic && !isPublic;
+    const isAcademic = /university|college|université|universite|ocad/.test(org);
+    const isPublic = /public|courthouse|regional|city|municipal|area|memorial|west|east|north|south|government|county/.test(org);
+    const isPrivate = !(isAcademic || isPublic);
 
     if (types.includes("Academic") && isAcademic) {
       return true;
@@ -95,7 +98,7 @@ function filterJobsByProvince(jobs, provinces) {
       return true;
     }
 
-    if (types.includes("Other") && isOther) {
+    if (types.includes("Private") && isPrivate) {
       return true;
     }
 
@@ -103,8 +106,10 @@ function filterJobsByProvince(jobs, provinces) {
   });
 }
 
+
+
 function getSelectedTypes() {
-  const types = ['Academic', 'Public', 'Other'];
+  const types = ['Academic', 'Public', 'Private'];
   return types.filter(type => document.getElementById(type).checked);
 }
 
