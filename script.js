@@ -25,46 +25,34 @@ function updateMarkers(jobs) {
 }
 
 async function addMarker(job) {
-  const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${job.location}.json?access_token=${mapboxgl.accessToken}`);
+  const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(job.location)}.json?access_token=${mapboxgl.accessToken}`);
   const data = await response.json();
-  
 
+  if (data.features && data.features.length > 0) {
+    const lngLat = data.features[0].center;
 
-if (data.features && data.features.length > 0) {
-  const lngLat = data.features[0].center;
+    const popup = new mapboxgl.Popup()
+      .setHTML(`
+        <h5><a href="${job.url}" target="_blank">${job.position}</a></h5>
+        <p>Organization: ${job.organization}</p>
+        <p>Location: ${job.location}</p>
+        <p>Opened: ${job.opened}</p>
+        <p>Closes: ${job.closes}</p>
+      `);
 
-  // Extract compensation information from the job URL
-  const response2 = await fetch(job.url);
-  const text = await response2.text();
-  const matches = text.match(/(?:compensation|salary)\D*(\$[0-9,]+(?:\.[0-9]+)?(\s+(?:to|and)\s+\$[0-9,]+(?:\.[0-9]+)?)?|(?:[0-9,]+(?:\.[0-9]+)?\s*(?:K|k|M|m|million|billion)?\s*(?:-|\s+)?(?:\$|USD|CAD|AUD|GBP|EUR)?))/i);
-  const compensation = matches ? matches[0] : 'N/A';
+    const marker = new mapboxgl.Marker()
+      .setLngLat(lngLat)
+      .setPopup(popup)
+      .addTo(map);
 
-  const popup = new mapboxgl.Popup()
-    .setHTML(`
-      <h5><a href="${job.url}" target="_blank">${job.position}</a></h5>
-      <p>Organization: ${job.organization}</p>
-      <p>Location: ${job.location}</p>
-      <p>Opened: ${job.opened}</p>
-      <p>Closes: ${job.closes}</p>
-      <p>Compensation: ${compensation}</p>
-    `);
+    // Add the province property to the job object
+    job.province = job.location.split(", ").pop();
 
-  const marker = new mapboxgl.Marker()
-    .setLngLat(lngLat)
-    .setPopup(popup)
-    .addTo(map);
-
-  // Add the province property to the job object
-  job.province = job.location.split(", ").pop();
-
-  markers.push(marker);
-} else {
-  console.warn(`Unable to geocode location: ${job.location}`);
+    markers.push(marker);
+  } else {
+    console.warn(`Unable to geocode location: ${job.location}`);
+  }
 }
-}
-
-
-
 
 
 function clearMarkers() {
@@ -92,12 +80,12 @@ function filterJobsByProvince(jobs, provinces) {
 }
 
  // Filter jobs by type
-function filterJobsByType(jobs, types) {
+ function filterJobsByType(jobs, types) {
   return jobs.filter(job => {
     const org = job.organization.toLowerCase();
     const isAcademic = /university|college|université|universite/.test(org);
     const isPublic = /public/.test(org);
-    const isOther = !(/university|college|université|universite|public/.test(org));
+    const isOther = !isAcademic && !isPublic;
 
     if (types.includes("Academic") && isAcademic) {
       return true;
@@ -114,8 +102,6 @@ function filterJobsByType(jobs, types) {
     return false;
   });
 }
-
-
 
 function getSelectedTypes() {
   const types = ['Academic', 'Public', 'Other'];
