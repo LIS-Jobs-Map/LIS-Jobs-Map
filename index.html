@@ -9,13 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
@@ -26,6 +19,72 @@
   </head>
   <body>
     <div id='map'></div>
+    <div id="controls" class="text-center">
+      <h3>Filter</h3>
+      <div class="btn-group">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="filterByPlaceBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          By Place
+        </button>
+        <div class="dropdown-menu" aria-labelledby="filterByPlaceBtn">
+          <li>
+            <label for="AB">Alberta</label>
+            <input class="dropdown-item" type="checkbox" value="AB" id="AB">
+          </li>
+          <li>
+            <label for="BC">British Columbia</label>
+            <input class="dropdown-item" type="checkbox" value="BC" id="BC">
+          </li>
+          <li>
+            <label for="MB">Manitoba</label>
+            <input class="dropdown-item" type="checkbox" value="MB" id="MB">
+          </li>
+          <li>
+            <label for="NB">New Brunswick</label>
+            <input class="dropdown-item" type="checkbox" value="NB" id="NB">
+          </li>
+          <li>
+            <label for="NL">Newfoundland & Labrador</label>
+            <input class="dropdown-item" type="checkbox" value="NL" id="NL">
+          </li>
+          <li>
+            <label for="NT">NWT</label>
+            <input class="dropdown-item" type="checkbox" value="NT" id="NT">
+          </li>
+          <li>
+            <label for="NS">Nova Scotia</label>
+            <input class="dropdown-item" type="checkbox" value="NS" id="NS">
+          </li>
+          <li>
+            <label for="NU">Nunavut</label>
+            <input class="dropdown-item" type="checkbox" value="NU" id="NU">
+          <li>
+            <label for="ON">Ontario</label>
+            <input class="dropdown-item" type="checkbox" value="ON" id="ON"> 
+          </li>
+          <li>
+            <label for="PE">PEI</label>
+            <input class="dropdown-item" type="checkbox" value="PE" id="PE">
+          </li>
+          <li>
+            <label for="QC">Quebec</label>
+            <input class="dropdown-item" type="checkbox" value="QC" id="QC"> 
+          </li>
+          <li>
+            <label for="SK">Saskatchewan</label>
+            <input class="dropdown-item" type="checkbox" value="SK" id="SK"> 
+          </li>
+          <li>
+            <label for="YT">Yukon</label>
+            <input class="dropdown-item" type="checkbox" value="YT" id="YT"> 
+          </li>
+          <li>
+            <label for="Other">Other</label>
+            <input class="dropdown-item" type="checkbox" value="Other" id="Other"> 
+          </li>
+      </div>
+    </div>
+    </div>
+  </main>
     <div class="container mt-4">
       <h1 class="text-center">Partnership Jobs</h1>
       <p class="text-center">

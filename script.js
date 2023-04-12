@@ -1,7 +1,3 @@
-console.log('begin script');
-
-document.cookie = 'cookieName=cookieValue; SameSite=strict';
-
 mapboxgl.accessToken = 'pk.eyJ1IjoiY211cmd1MTk5MiIsImEiOiJjbGdiOWJrbGIxMWZrM2xvd3d4d2Z0MDUxIn0.-AOw-79x1dTTTJnhMLF47w';
 
 const map = new mapboxgl.Map({
@@ -11,20 +7,24 @@ const map = new mapboxgl.Map({
   zoom: 3
 });
 
-loadJobData();
+let allJobs = [];
+let markers = [];
 
 async function loadJobData() {
   const response = await fetch('jobs.json');
-  const jobs = await response.json();
-
-  const availableJobs = jobs.filter((job) => !isDateInPast(job.closes));
-
-  availableJobs.forEach((job) => {
-    geocodeAndAddMarker(job);
-  });
+  allJobs = await response.json();
+  updateMarkers(allJobs);
 }
 
-async function geocodeAndAddMarker(job) {
+function updateMarkers(jobs) {
+  clearMarkers();
+
+  for (const job of jobs) {
+    addMarker(job);
+  }
+}
+
+async function addMarker(job) {
   const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(job.location)}.json?access_token=${mapboxgl.accessToken}`);
   const data = await response.json();
 
@@ -33,7 +33,7 @@ async function geocodeAndAddMarker(job) {
 
     const popup = new mapboxgl.Popup()
       .setHTML(`
-        <h3><a href="${job.url}" target="_blank">${job.position}</a></h3>
+        <h5><a href="${job.url}" target="_blank">${job.position}</a></h5>
         <p>Organization: ${job.organization}</p>
         <p>Location: ${job.location}</p>
         <p>Opened: ${job.opened}</p>
@@ -44,16 +44,56 @@ async function geocodeAndAddMarker(job) {
       .setLngLat(lngLat)
       .setPopup(popup)
       .addTo(map);
+
+    // Add the province property to the job object
+    job.province = job.location.split(", ").pop();
+
+    markers.push(marker);
   } else {
     console.warn(`Unable to geocode location: ${job.location}`);
   }
 }
 
-function isDateInPast(dateString) {
-  const date = new Date(dateString);
-  const currentDate = new Date();
-  return date < currentDate;
+
+function clearMarkers() {
+  for (const marker of markers) {
+    marker.remove();
+  }
+  markers = [];
+}
+
+function getSelectedProvinces() {
+  const provinces = ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'Other'];
+  return provinces.filter(province => document.getElementById(province).checked);
+}
+
+function filterJobsByProvince(jobs, provinces) {
+  const canadianProvinces = ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT'];
+  return jobs.filter(job => {
+    // If "Other" is selected, include jobs that are not in Canadian provinces or territories
+    if (provinces.includes("Other") && !canadianProvinces.includes(job.province)) {
+      return true;
+    }
+    // Otherwise, include jobs that are in the selected provinces
+    return provinces.includes(job.province);
+  });
 }
 
 
-console.log('script over');
+
+loadJobData();
+
+document.querySelectorAll("#controls input[type='checkbox']").forEach(checkbox => {
+  checkbox.addEventListener('change', () => {
+    const selectedProvinces = getSelectedProvinces();
+    let filteredJobs;
+
+    // If no provinces are selected, show all jobs
+    if (selectedProvinces.length === 0) {
+      filteredJobs = allJobs;
+    } else {
+      filteredJobs = filterJobsByProvince(allJobs, selectedProvinces);
+    }
+    updateMarkers(filteredJobs);
+  });
+});

@@ -82,3 +82,18 @@ h3 {
   font-size: 12px !important;
   max-width: 100% !important;
 }
+
+.dropdown-menu li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.dropdown-menu label {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.dropdown-menu input[type='checkbox'] {
+  margin-left: 8px;
+}
