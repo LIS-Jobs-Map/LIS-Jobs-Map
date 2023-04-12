@@ -105,9 +105,17 @@
           </li>
         </div>
       </div>
+      <div class="btn-group">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="salary-filter-btn">Toggle Salary Filter</button>
+        <div id="salary-slider-container">
+          <input type="range" id="salary-slider" min="0" max="100000" step="5000" value="0">
+          <div id="salary-slider-value"></div>
+        </div>
+        </div>
+
     </div>
     <div class="container mt-4">
-      <h1 class="text-center">Partnership Jobs</h1>
+      <h1 class="text-center">Partnership Jobs 💼</h1>
       <p class="text-center">
         Welcome to the Partnership Jobs map. This project displays job opportunities in the library and information field across Canada. The job data is scraped from partnershipjobs.ca regularly, and presented here in an interactive map format. Click on the markers to view more information about each job posting and visit their respective links for further details.
       </p>
@@ -132,7 +140,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Analyze job descriptions for keywords and requirements">
+          <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Analyze job descriptions for keywords and requirements using OpenAI LLM">
             <div class="card-body">
               <i class="fas fa-file-alt fa-4x mb-3"></i>
               <h5 class="card-title">Job Description Analysis</h5>

@@ -31,17 +31,15 @@ async function addMarker(job) {
   if (data.features && data.features.length > 0) {
     const lngLat = data.features[0].center;
 
-    // ...
-const popup = new mapboxgl.Popup()
-.setHTML(`
-  <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
-  <p>Organization: ${job.organization}</p>
-  <p>Location: ${job.location}</p>
-  <p>Opened: ${job.opened}</p>
-  <p>Closes: ${job.closes}</p>
-`);
-// ...
-
+    const popup = new mapboxgl.Popup()
+      .setHTML(`
+        <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
+        <p>Organization: ${job.organization}</p>
+        <p>Location: ${job.location}</p>
+        <p>Opened: ${job.opened}</p>
+        <p>Closes: ${job.closes}</p>
+        <p>Salary: ${job.salary}</p>
+      `);
 
     const marker = new mapboxgl.Marker()
       .setLngLat(lngLat)
@@ -51,11 +49,15 @@ const popup = new mapboxgl.Popup()
     // Add the province property to the job object
     job.province = job.location.split(", ").pop();
 
+    // Store the job object in the marker
+    marker.job = job;
+
     markers.push(marker);
   } else {
     console.warn(`Unable to geocode location: ${job.location}`);
   }
 }
+
 
 
 function clearMarkers() {
@@ -64,6 +66,58 @@ function clearMarkers() {
   }
   markers = [];
 }
+
+function updateMapMarkers() {
+  const jobType = document.querySelector('input[name="job-type"]:checked').value;
+  const salarySlider = document.getElementById('salary-slider');
+  const salaryFilter = salarySlider ? parseInt(salarySlider.value) : 0;
+
+  markers.forEach(marker => {
+    const job = marker.job;
+
+    if (jobType === 'all' || job.category === jobType) {
+      if (job.salary !== 'N/A') {
+        const salaryRange = job.salary.split('-');
+        const minSalary = parseFloat(salaryRange[0].replace(/[$,]/g, ''));
+
+        if (salaryFilter <= minSalary) {
+          marker.addTo(map);
+        } else {
+          marker.remove();
+        }
+      } else {
+        marker.addTo(map);
+      }
+    } else {
+      marker.remove();
+    }
+  });
+}
+
+
+
+
+
+const salaryFilterBtn = document.getElementById('salary-filter-btn');
+const salarySliderContainer = document.getElementById('salary-slider-container');
+const salarySlider = document.getElementById('salary-slider');
+const salarySliderValue = document.getElementById('salary-slider-value');
+
+salaryFilterBtn.addEventListener('click', () => {
+  salarySliderContainer.style.display = salarySliderContainer.style.display === 'none' ? 'block' : 'none';
+});
+
+if (salarySlider) {
+  salarySlider.addEventListener('input', (event) => {
+    const value = parseInt(event.target.value, 10);
+    salarySliderValue.textContent = value;
+
+    // Update map markers based on the slider value
+    updateMapMarkers(value);
+  });
+}
+
+
 
 function getSelectedProvinces() {
   const provinces = ['AB', 'BC', 'MB', 'NB', 'NL', 'NT', 'NS', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT', 'Other'];
