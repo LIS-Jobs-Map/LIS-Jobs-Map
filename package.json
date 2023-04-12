@@ -1,17 +1,23 @@
 {
-  "name": "partners-map",
+  "name": "mapping-jobs",
   "version": "1.0.0",
-  "main": "scrape.js",
+  "description": "",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmurgu/mapping-jobs.git"
+  },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "axios": "^1.3.5",
-    "cheerio": "^1.0.0-rc.12",
-    "node-cron": "^3.0.2"
+  "bugs": {
+    "url": "https://github.com/cmurgu/mapping-jobs/issues"
   },
-  "description": ""
+  "homepage": "https://github.com/cmurgu/mapping-jobs#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.10"
+  }
 }
