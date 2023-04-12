@@ -21,6 +21,7 @@
     <div id='map'></div>
     <div id="controls" class="text-center">
       <h3>Filter</h3>
+      <!-- this is the first filter -->
       <div class="btn-group">
         <button class="btn btn-primary dropdown-toggle" type="button" id="filterByPlaceBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           By Place
@@ -83,6 +84,33 @@
           </li>
       </div>
     </div>
+      <!-- this is the 2nd filter -->
+      <div class="btn-group">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="filterByTypeBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          By Type
+        </button>
+        <div class="dropdown-menu" aria-labelledby="filterByTypeBtn">
+          <li>
+            <label for="Academic">Academic</label>
+            <input class="dropdown-item" type="checkbox" value="Academic" id="Academic">
+          </li>
+          <li>
+            <label for="Public">Public</label>
+            <input class="dropdown-item" type="checkbox" value="Public" id="Public">
+          </li>
+          <li>
+            <label for="OtherType">Other</label>
+            <input class="dropdown-item" type="checkbox" value="OtherType" id="OtherType">
+          </li>
+        </div>
+      </div>
+      
+
+
+
+
+
+
     </div>
   </main>
     <div class="container mt-4">

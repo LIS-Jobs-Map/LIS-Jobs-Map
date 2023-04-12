@@ -79,21 +79,63 @@ function filterJobsByProvince(jobs, provinces) {
   });
 }
 
+ // Filter jobs by type
+function filterJobsByType(jobs, types) {
+  return jobs.filter(job => {
+    const org = job.organization.toLowerCase();
+    const isAcademic = /university|college|université|universite/.test(org);
+    const isPublic = /public/.test(org);
+    const isOther = !(/university|college|université|universite|public/.test(org));
+
+    if (types.includes("Academic") && isAcademic) {
+      return true;
+    }
+
+    if (types.includes("Public") && isPublic) {
+      return true;
+    }
+
+    if (types.includes("Other") && isOther) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
+
+
+function getSelectedTypes() {
+  const types = ['Academic', 'Public', 'Other'];
+  return types.filter(type => document.getElementById(type).checked);
+}
 
 
 loadJobData();
 
 document.querySelectorAll("#controls input[type='checkbox']").forEach(checkbox => {
-  checkbox.addEventListener('change', () => {
-    const selectedProvinces = getSelectedProvinces();
-    let filteredJobs;
+    checkbox.addEventListener('change', () => {
+      const selectedProvinces = getSelectedProvinces();
+      const selectedTypes = getSelectedTypes();
+      let filteredJobs;
 
-    // If no provinces are selected, show all jobs
-    if (selectedProvinces.length === 0) {
-      filteredJobs = allJobs;
-    } else {
-      filteredJobs = filterJobsByProvince(allJobs, selectedProvinces);
-    }
-    updateMarkers(filteredJobs);
+      // If no provinces or types are selected, show all jobs
+      if (selectedProvinces.length === 0 && selectedTypes.length === 0) {
+        filteredJobs = allJobs;
+      } else {
+        // If only provinces or only types are selected, filter by those
+        if (selectedProvinces.length === 0 || selectedTypes.length === 0) {
+          if (selectedProvinces.length === 0) {
+            filteredJobs = filterJobsByType(allJobs, selectedTypes);
+          } else {
+            filteredJobs = filterJobsByProvince(allJobs, selectedProvinces);
+          }
+        } else {
+          // If both provinces and types are selected, filter by both
+          const filteredByProvince = filterJobsByProvince(allJobs, selectedProvinces);
+          filteredJobs = filterJobsByType(filteredByProvince, selectedTypes);
+        }
+      }
+      updateMarkers(filteredJobs);
+    });
   });
-});
