@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" crossorigin="anonymous">
@@ -19,12 +19,23 @@
   </head>
   <body>
 
-    <div id='map'></div>
-    <div id="controls" class="text-center">
+    <div id="map">
+      <div id="job-count-container">
+        <span id="job-count">0</span> Jobs
+        <div id="loading-spinner"></div>
+      </div>
+    </div>
+    
+    <div id="controls" class="text-center"><br>
       <h3>Filter</h3>
       <!-- this is the first filter -->
+      <div id="search-container">
+        <input type="text" id="search-input" placeholder="Search jobs..." />
+        <button class="btn btn-info" id="search-btn">Search <i class="fas fa-search"></i></button>
+      </div>
+      <br>
       <div class="btn-group">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="filterByPlaceBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-info dropdown-toggle" type="button" id="filterByPlaceBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           By Place
         </button>
         <div class="dropdown-menu" aria-labelledby="filterByPlaceBtn">
@@ -87,7 +98,7 @@
     </div>
       <!-- this is the 2nd filter -->
       <div class="btn-group">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="filterByTypeBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-info dropdown-toggle" type="button" id="filterByTypeBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           By Type
         </button>
         <div class="dropdown-menu" aria-labelledby="filterByTypeBtn">
@@ -112,6 +123,16 @@
           <div id="salary-slider-value"></div>
         </div>
         </div>
+      <div class="btn-group">
+        <button class="btn btn-info" type="button" id="clear-filters-btn">Clear</button>
+        </div>
+<script>
+  $(document).ready(function() {
+    $("#salary-filter-btn").click(function() {
+      $("#salary-slider-container").toggle();
+    });
+  });
+</script>
 
     </div>
     <div class="container mt-4">
@@ -123,27 +144,35 @@
     <div class="container">
       <h1 class="text-center">Project Roadmap</h1>
       <div class="row justify-content-center">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Filter jobs by various criteria">
-            <div class="card-body">
+            <div class="card-body rmf-done">
               <i class="fas fa-filter fa-4x mb-3"></i>
               <h5 class="card-title">Filtering</h5>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="See salary information for each job">
-            <div class="card-body">
+            <div class="card-body rmf-process">
               <i class="fas fa-dollar-sign fa-4x mb-3"></i>
               <h5 class="card-title">Salary Information</h5>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Analyze job descriptions for keywords and requirements using OpenAI LLM">
-            <div class="card-body">
+            <div class="card-body rmf-tbd">
               <i class="fas fa-file-alt fa-4x mb-3"></i>
-              <h5 class="card-title">Job Description Analysis</h5>
+              <h5 class="card-title">🤖 Job Analysis</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Daily, monthly, and yearly tracking of jobs in information and library science in Canada">
+            <div class="card-body rmf-tbd">
+              <i class="fas fa-bar-chart fa-4x mb-3"></i>
+              <h5 class="card-title">Historical Job Tracking</h5>
             </div>
           </div>
         </div>
@@ -153,7 +182,7 @@
       <h2 class="text-center mb-4">Data</h2>
       <div class="row">
         <div class="col text-center">
-          <a href="jobs.json" id="downloadBtn" class="btn btn-primary">Download</a>
+          <a href="jobs.json" id="downloadBtn" class="btn btn-info">Download</a>
         </div>
       </div>
     </div>

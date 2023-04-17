@@ -97,3 +97,40 @@ h3 {
 .dropdown-menu input[type='checkbox'] {
   margin-left: 8px;
 }
+
+#salary-slider-container {
+  display: none;
+}
+
+#job-count-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 3px;
+  padding: 6px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  z-index: 1;
+}
+
+#job-count {
+  font-size: 18px;
+  color: #14a2b8;
+}
+
+.rmf-done {
+  background: green;
+  color: white;
+}
+
+.rmf-process {
+  background: #FFBF00;
+  color: white;
+}
+
+.rmf-tbd {
+  background: #CC0000;
+  color: white;
+}
