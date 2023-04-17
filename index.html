@@ -8,6 +8,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js" integrity="sha512-V0j9LhrK9IMNdFYZqh+IqU4cjo7wdxyHNyH+L0td4HryBuZ7Oq6QxP2/CWr6TituX31+gv5PnolvERuTbz8UNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" crossorigin="anonymous">
 
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
@@ -117,14 +126,14 @@
         </div>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary dropdown-toggle" type="button" id="salary-filter-btn">By Salary</button>
+        <button class="btn btn-info dropdown-toggle" type="button" id="salary-filter-btn">By Salary</button>
         <div id="salary-slider-container">
           <input type="range" id="salary-slider" min="0" max="100000" step="5000" value="0">
           <div id="salary-slider-value"></div>
         </div>
         </div>
       <div class="btn-group">
-        <button class="btn btn-info" type="button" id="clear-filters-btn">Clear</button>
+        <button class="btn btn-danger" type="button" id="clear-filters-btn">Clear</button>
         </div>
 <script>
   $(document).ready(function() {
@@ -141,6 +150,17 @@
         Welcome to the Partnership Jobs map. This project displays job opportunities in the library and information field across Canada. The job data is scraped from partnershipjobs.ca regularly, and presented here in an interactive map format. Click on the markers to view more information about each job posting and visit their respective links for further details.
       </p>
     </div>
+    <div class="container mt-4">
+      <h1 class="text-center">Jobs Over Time 🗓️</h1>
+      <div class="row justify-content-center">
+        <div id="chart"></div>
+      </div>
+
+    <script src="app.js"></script>
+  </div>
+
+
+
     <div class="container">
       <h1 class="text-center">Project Roadmap</h1>
       <div class="row justify-content-center">
@@ -170,7 +190,7 @@
         </div>
         <div class="col-md-3">
           <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Daily, monthly, and yearly tracking of jobs in information and library science in Canada">
-            <div class="card-body rmf-tbd">
+            <div class="card-body rmf-process">
               <i class="fas fa-bar-chart fa-4x mb-3"></i>
               <h5 class="card-title">Historical Job Tracking</h5>
             </div>

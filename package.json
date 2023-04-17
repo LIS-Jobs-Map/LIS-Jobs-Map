@@ -18,6 +18,8 @@
   "homepage": "https://github.com/cmurgu/mapping-jobs#readme",
   "dependencies": {
     "axios": "^0.21.1",
-    "cheerio": "^1.0.0-rc.10"
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "cheerio": "^1.0.0-rc.10",
+    "date-fns": "^2.29.3"
   }
 }

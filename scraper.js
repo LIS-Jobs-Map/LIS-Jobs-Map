@@ -45,10 +45,15 @@ async function getSalary(url) {
   return 'N/A';
 }
 
+function getTimestampedFilename() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const timestampedFilename = `jobs_${year}${month}${day}.json`;
 
 
-
-
+return path.join('data', timestampedFilename);}
 
 (async () => {
   try {
@@ -73,13 +78,19 @@ async function getSalary(url) {
           const opened = $(element).find('td:nth-child(4)').text().trim();
           const closes = $(element).find('td:nth-child(5)').text().trim();
           const salary = await getSalary(url);
+          const scrapedOn = new Date().toISOString().substring(0, 10); // get only the date part
 
-          jobs.push({ position, url, organization, location, opened, closes, salary });
+
+          jobs.push({ position, url, organization, location, opened, closes, salary, scrapedOn});
         });
 
         currentPage += 1;
       }
     }
+
+    const timestampedFilename = getTimestampedFilename();
+    fs.writeFileSync(timestampedFilename, JSON.stringify(jobs, null, 2));
+    console.log(`The scraped data has been saved in the timestamped file: ${timestampedFilename}`);
 
     fs.writeFileSync('jobs.json', JSON.stringify(jobs, null, 2));
     console.log('jobs.json file has been saved with the scraped data.');
