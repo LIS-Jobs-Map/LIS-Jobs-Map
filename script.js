@@ -178,7 +178,18 @@ function getSelectedTypes() {
 }
 
 
+function filterJobsClosingSoon(jobs) {
+  const now = new Date();
+  const sevenDaysLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  return jobs.filter(job => {
+    const closingDate = new Date(job.closes);
+    return closingDate >= now && closingDate <= sevenDaysLater;
+  });
+}
+
 loadJobData();
+
 
 document.querySelectorAll("#controls input[type='checkbox']").forEach(checkbox => {
     checkbox.addEventListener('change', () => {
@@ -248,8 +259,14 @@ document.querySelectorAll("#controls input[type='checkbox']").forEach(checkbox =
     });
   }
 
-  const searchBtn = document.getElementById('search-btn');
+const searchBtn = document.getElementById('search-btn');
 const searchInput = document.getElementById('search-input');
+const closingSoonBtn = document.getElementById('closing-soon-btn');
+
+closingSoonBtn.addEventListener('click', () => {
+  const filteredJobs = filterJobsClosingSoon(allJobs);
+  updateMarkers(filteredJobs);
+});
 
 searchBtn.addEventListener('click', () => {
   const keywords = searchInput.value.trim().toLowerCase();
