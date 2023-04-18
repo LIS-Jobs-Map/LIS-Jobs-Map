@@ -1,3 +1,5 @@
+import { openaiApiKey } from "./config.js";
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiY211cmd1MTk5MiIsImEiOiJjbGdiOWJrbGIxMWZrM2xvd3d4d2Z0MDUxIn0.-AOw-79x1dTTTJnhMLF47w';
 
 const map = new mapboxgl.Map({
@@ -10,11 +12,41 @@ const map = new mapboxgl.Map({
 let allJobs = [];
 let markers = [];
 
-async function loadJobData() {
-  const response = await fetch('jobs.json');
-  allJobs = await response.json();
-  updateMarkers(allJobs);
+async function generateSummary(text) {
+  const apiUrl = 'https://api.openai.com/v1/engines/ada/completions';
+  
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${openaiApiKey}`
+      },
+      body: JSON.stringify({
+        prompt: `Please provide a summary of the following job description:\n\n${text}\n\nSummary: `,
+        max_tokens: 50,
+        n: 1,
+        stop: null,
+        temperature: 0.7
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.choices && data.choices.length > 0) {
+      return data.choices[0].text.trim();
+    } else {
+      console.error('No summary generated');
+      return '';
+    }
+  } catch (error) {
+    console.error('Error generating summary:', error);
+    return '';
+  }
 }
+
+
+
 
 function updateMarkers(jobs) {
   clearMarkers();
@@ -36,15 +68,18 @@ async function addMarker(job) {
   if (data.features && data.features.length > 0) {
     const lngLat = data.features[0].center;
 
-    const popup = new mapboxgl.Popup()
-      .setHTML(`
-        <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
-        <p>Organization: ${job.organization}</p>
-        <p>Location: ${job.location}</p>
-        <p>Opened: ${job.opened}</p>
-        <p>Closes: ${job.closes}</p>
-        <p>Salary: ${job.salary}</p>
-      `);
+    const popupContent = `
+      <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
+      <p>Organization: ${job.organization}</p>
+      <p>Location: ${job.location}</p>
+      <p>Opened: ${job.opened}</p>
+      <p>Closes: ${job.closes}</p>
+      <p>Salary: ${job.salary}</p>
+      ${job.summary ? `<p>Summary: ${job.summary}</p>` : ""}
+    `;
+
+    const popup = new mapboxgl.Popup({ className: "job-popup" })
+      .setHTML(popupContent);
 
     const marker = new mapboxgl.Marker()
       .setLngLat(lngLat)
@@ -57,11 +92,37 @@ async function addMarker(job) {
     // Store the job object in the marker
     marker.job = job;
 
+    // Add a click event listener to the marker
+    marker.getElement().addEventListener("click", async () => {
+      // Check if the job object already has a summary
+      if (!job.summary) {
+        // Generate the summary and save it to the job object
+        job.summary = await generateSummary(
+          `${job.position} at ${job.organization}: ${job.description}`
+        );
+
+        // Update the popup content with the summary
+        const updatedPopupContent = `
+          <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
+          <p>Organization: ${job.organization}</p>
+          <p>Location: ${job.location}</p>
+          <p>Opened: ${job.opened}</p>
+          <p>Closes: ${job.closes}</p>
+          <p>Salary: ${job.salary}</p>
+          <p>Summary: ${job.summary}</p>
+        `;
+        popup.setHTML(updatedPopupContent);
+      }
+    });
+
     markers.push(marker);
   } else {
     console.warn(`Unable to geocode location: ${job.location}`);
   }
 }
+
+
+
 
 
 
@@ -288,10 +349,13 @@ async function loadJobData() {
   const response = await fetch("jobs.json");
   allJobs = await response.json();
 
+  // Add markers for each job
+  for (const job of allJobs) {
+    addMarker(job);
+  }
+
   // Artificial delay for demonstration purposes
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  updateMarkers(allJobs);
-
   spinner.style.display = "none";
-};
+}
