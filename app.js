@@ -1,8 +1,14 @@
 // Replace the following array with your actual JSON file names or URLs
-async function fetchJsonFileList() {
-  const response = await fetch("data/fileList.json");
-  const files = await response.json();
-  return files.map((file) => `data/${file}`);
+async function fetchFileList() {
+  const response = await fetch("./data/fileList.json");
+  const fileList = await response.json();
+
+  if (Array.isArray(fileList)) {
+    return fileList;
+  } else {
+    console.error("Invalid data in fileList.json.");
+    return [];
+  }
 }
 
 async function fetchJobData(file) {
@@ -11,47 +17,57 @@ async function fetchJobData(file) {
   return data;
 }
 
-async function countJobsPerDay() {
-  const counts = [];
+async function countJobsPerDay(fileList) {
+  const dailyJobCounts = [];
 
-  for (const file of jsonFiles) {
-    const data = await fetchJobData(file);
-    const count = data.length;
-    counts.push({ date: data[0].scrapedOn, count });
+  for (const file of fileList) {
+    const response = await fetch(`./data/${file}`);
+    const jobs = await response.json();
+    dailyJobCounts.push({ date: jobs[0].scrapedOn, count: jobs.length });
   }
 
-  return counts;
+  return dailyJobCounts;
 }
 
-async function createLineChart() {
-  const jobCounts = await countJobsPerDay();
 
-  const ctx = document.getElementById("jobChart").getContext("2d");
-  const chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: jobCounts.map((entry) => entry.date),
-      datasets: [
-        {
-          label: "Number of Jobs",
-          data: jobCounts.map((entry) => entry.count),
-          borderColor: "rgba(75, 192, 192, 1)",
-          backgroundColor: "rgba(75, 192, 192, 0.2)",
-          tension: 0.1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 10,
-          },
+async function createLineChart() {
+  const fileList = await fetchFileList();
+  console.log("Fetched fileList:", fileList); // Add this line for debugging
+
+  const dailyJobCounts = await countJobsPerDay(fileList);
+  console.log("Daily job counts:", dailyJobCounts); // Add this line for debugging
+
+  const chartData = {
+    labels: dailyJobCounts.map((item) => item.date),
+    datasets: [
+      {
+        label: "Number of Jobs",
+        data: dailyJobCounts.map((item) => item.count),
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 10,
         },
       },
     },
+  };
+
+  const ctx = document.getElementById("jobChart").getContext("2d");
+  const jobChart = new Chart(ctx, {
+    type: "line",
+    data: chartData,
+    options: chartOptions,
   });
 }
+
 
 createLineChart();
