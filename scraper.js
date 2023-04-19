@@ -61,8 +61,10 @@ function getTimestampedFilename() {
   const day = String(date.getDate()).padStart(2, '0');
   const timestampedFilename = `jobs_${year}${month}${day}.json`;
 
+  // Add 'public' before 'data' in the path
+  return path.join('public', 'data', timestampedFilename);
+}
 
-return path.join('data', timestampedFilename);}
 
 (async () => {
   try {

@@ -1,7 +1,10 @@
 const fs = require("fs");
-const path = require("path"); // Add this line
+const path = require("path");
 
-const dataDir = path.join(__dirname, "data");
+// Add 'public' to the dataDir path
+const dataDir = path.join(__dirname, "public", "data");
+
+// Add 'public' to the fileListPath
 const fileListPath = path.join(dataDir, "fileList.json");
 
 fs.readdir(dataDir, (err, files) => {
