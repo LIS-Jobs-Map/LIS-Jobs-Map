@@ -3,22 +3,27 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
 
-async function getSalary(url) {
+async function getJobDetails(url) {
+  let salary = 'N/A';
+  let jobDescription = '';
+
   try {
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
-    const compensationText = $('body').text();
+    const bodyHTML = $('body').html();
+    const bodyTextWithoutTags = bodyHTML.replace(/<[^>]*>/g, '');
+    jobDescription = bodyTextWithoutTags.replace(/\s\s+/g, ' ').trim();    const compensationText = $('body').text();
     const compensationRegex = /(compensation|salary)[\s\S]*?(\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?[-\s]*?(?:\d{1,3}(?:,\d{3})*(?:\.\d{2})?)?)\s*(hourly|per hour)?/i;
     const match = compensationText.match(compensationRegex);
 
     if (match) {
-      let salary = match[2];
+      salary = match[2];
       const isHourly = match[3] && match[3].toLowerCase().includes('hour');
 
       if (isHourly) {
         const hourlyWage = parseFloat(salary.replace(/[$,]/g, ''));
         const annualWage = hourlyWage * 1680; // 1680 hours per year
-        return `$${annualWage.toFixed(2)}`;
+        salary = `$${annualWage.toFixed(2)}`;
       } else {
         const numberRegex = /\d{1,3}(?:,\d{3})*(?:\.\d{2})?/;
         const salaryNumbers = salary.match(numberRegex);
@@ -34,16 +39,20 @@ async function getSalary(url) {
             salary = `$${rawSalary.toFixed(2)}`;
           }
         }
-
-        return salary;
       }
     }
   } catch (error) {
-    console.error(`Error while fetching salary for URL: ${url}`);
+    console.error(`Error while fetching job details for URL: ${url}`);
   }
 
-  return 'N/A';
+  return {
+    salary: salary,
+    jobDescription: jobDescription,
+  };
+  
 }
+
+
 
 function getTimestampedFilename() {
   const date = new Date();
@@ -77,7 +86,7 @@ return path.join('data', timestampedFilename);}
           const location = $(element).find('td:nth-child(3)').text().trim();
           const opened = $(element).find('td:nth-child(4)').text().trim();
           const closes = $(element).find('td:nth-child(5)').text().trim();
-          const salary = await getSalary(url);
+          const salary = await getJobDetails(url);
           const scrapedOn = new Date().toISOString().substring(0, 10); // get only the date part
 
 

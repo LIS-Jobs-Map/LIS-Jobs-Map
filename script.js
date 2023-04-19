@@ -1,5 +1,3 @@
-import { openaiApiKey } from "./config.js";
-
 mapboxgl.accessToken = 'pk.eyJ1IjoiY211cmd1MTk5MiIsImEiOiJjbGdiOWJrbGIxMWZrM2xvd3d4d2Z0MDUxIn0.-AOw-79x1dTTTJnhMLF47w';
 
 const map = new mapboxgl.Map({
@@ -57,7 +55,7 @@ function updateMarkers(jobs) {
 
   // Update job count
   const jobCount = document.getElementById('job-count');
-  jobCount.textContent = jobs.length;
+  jobCount.textContent = `${jobs.length}`; // Add the "Job count: " text
 }
 
 
@@ -108,8 +106,8 @@ async function addMarker(job) {
           <p>Location: ${job.location}</p>
           <p>Opened: ${job.opened}</p>
           <p>Closes: ${job.closes}</p>
-          <p>Salary: ${job.salary}</p>
-          <p>Summary: ${job.summary}</p>
+          <p>Salary: ${job.salary.salary}</p>         
+          <p>Summary: ${job.jobDescription}</p>
         `;
         popup.setHTML(updatedPopupContent);
       }
@@ -349,10 +347,8 @@ async function loadJobData() {
   const response = await fetch("jobs.json");
   allJobs = await response.json();
 
-  // Add markers for each job
-  for (const job of allJobs) {
-    addMarker(job);
-  }
+  // Add markers for each job and update the job count
+  updateMarkers(allJobs);
 
   // Artificial delay for demonstration purposes
   await new Promise(resolve => setTimeout(resolve, 2000));
