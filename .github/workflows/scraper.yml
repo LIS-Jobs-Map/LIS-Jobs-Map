@@ -3,7 +3,7 @@ name: Scrape Jobs and Deploy
 on:
   schedule:
     - cron: '0 0 * * *'
-  workflow_dispatch: # Add this line
+  workflow_dispatch:
 
 jobs:
   scrape:
@@ -28,8 +28,8 @@ jobs:
         run: node updateFileList.js
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/gh-pages@v3.8.0
+        uses: JamesIves/github-pages-deploy-action@4.1.9
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          allow_empty_commit: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: ./public
