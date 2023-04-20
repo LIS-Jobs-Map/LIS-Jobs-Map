@@ -28,14 +28,14 @@ jobs:
 
       - name: Update fileList.json
         run: node updateFileList.js
-        working-directory: ./ # Set the working directory to the root of the repository
+        working-directory: ./
 
       - name: Deploy to GitHub Pages
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git checkout --orphan gh-pages
-          git add public
+          git add data
           git commit -m "Deploy to GitHub Pages"
           git push origin gh-pages --force
         env:

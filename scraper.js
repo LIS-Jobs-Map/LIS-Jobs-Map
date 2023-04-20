@@ -3,6 +3,11 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
 
+// Helper function to sleep for a specified duration
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function getJobDetails(url) {
   let salary = 'N/A';
   let jobDescription = '';
@@ -12,7 +17,8 @@ async function getJobDetails(url) {
     const $ = cheerio.load(response.data);
     const bodyHTML = $('body').html();
     const bodyTextWithoutTags = bodyHTML.replace(/<[^>]*>/g, '');
-    jobDescription = bodyTextWithoutTags.replace(/\s\s+/g, ' ').trim();    const compensationText = $('body').text();
+    jobDescription = bodyTextWithoutTags.replace(/\s\s+/g, ' ').trim();    
+    const compensationText = $('body').text();
     const compensationRegex = /(compensation|salary)[\s\S]*?(\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?[-\s]*?(?:\d{1,3}(?:,\d{3})*(?:\.\d{2})?)?)\s*(hourly|per hour)?/i;
     const match = compensationText.match(compensationRegex);
 
@@ -49,10 +55,7 @@ async function getJobDetails(url) {
     salary: salary,
     jobDescription: jobDescription,
   };
-  
 }
-
-
 
 function getTimestampedFilename() {
   const date = new Date();
@@ -61,10 +64,8 @@ function getTimestampedFilename() {
   const day = String(date.getDate()).padStart(2, '0');
   const timestampedFilename = `jobs_${year}${month}${day}.json`;
 
-  // Add 'public' before 'data' in the path
-  return path.join('public', 'data', timestampedFilename);
+  return path.join('data', timestampedFilename);
 }
-
 
 (async () => {
   try {
@@ -88,14 +89,26 @@ function getTimestampedFilename() {
           const location = $(element).find('td:nth-child(3)').text().trim();
           const opened = $(element).find('td:nth-child(4)').text().trim();
           const closes = $(element).find('td:nth-child(5)').text().trim();
-          const salary = await getJobDetails(url);
+          const details = await getJobDetails(url);
           const scrapedOn = new Date().toISOString().substring(0, 10); // get only the date part
 
+          jobs.push({ 
+            position, 
+            url, 
+            organization, 
+            location, 
+            opened, 
+            closes, 
+            salary: details.salary, 
+            jobDescription: details.jobDescription,
+            scrapedOn
+          });
 
-          jobs.push({ position, url, organization, location, opened, closes, salary, scrapedOn});
+          await sleep(5000); // Wait for 5 seconds before moving to the next job
         });
 
         currentPage += 1;
+        await sleep(5000); // Wait for 10 seconds before moving to the next page
       }
     }
 

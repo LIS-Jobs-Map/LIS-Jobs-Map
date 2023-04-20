@@ -1,10 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const dataDir = path.join(__dirname, "public", "data");
+const dataDir = path.join(__dirname, "data");
 const fileListPath = path.join(dataDir, "fileList.json");
-
-console.log("Data directory path:", dataDir);
 
 fs.readdir(dataDir, (err, files) => {
   if (err) {
