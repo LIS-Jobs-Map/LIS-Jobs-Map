@@ -1,4 +1,4 @@
-const ghpages = require('gh-pages');
+const { execSync } = require('child_process');
 const { GITHUB_TOKEN } = process.env;
 
 if (!GITHUB_TOKEN) {
@@ -6,22 +6,16 @@ if (!GITHUB_TOKEN) {
   process.exit(1);
 }
 
-ghpages.publish(
-  'data',
-  {
-    branch: 'gh-pages',
-    repo: `https://${GITHUB_TOKEN}@github.com/cmurgu/mapping-jobs.git`,
-    user: {
-      name: 'GitHub Action',
-      email: 'action@github.com',
-    },
-  },
-  (err) => {
-    if (err) {
-      console.error('Failed to deploy to GitHub Pages:', err);
-      process.exit(1);
-    } else {
-      console.log('Successfully deployed to GitHub Pages');
-    }
-  }
-);
+try {
+  execSync('git config --local user.email "action@github.com"');
+  execSync('git config --local user.name "GitHub Action"');
+  execSync('git checkout --orphan gh-pages');
+  execSync('git add .');
+  execSync('git commit -m "Deploy to GitHub Pages"');
+  execSync(`git push https://${GITHUB_TOKEN}@github.com/cmurgu/mapping-jobs.git gh-pages --force`);
+
+  console.log('Successfully deployed to GitHub Pages');
+} catch (error) {
+  console.error('Failed to deploy to GitHub Pages:', error);
+  process.exit(1);
+}
