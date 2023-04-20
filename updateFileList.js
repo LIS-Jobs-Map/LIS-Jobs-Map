@@ -1,15 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 
-// Add 'public' to the dataDir path
 const dataDir = path.join(__dirname, "public", "data");
-
-// Add 'public' to the fileListPath
 const fileListPath = path.join(dataDir, "fileList.json");
+
+console.log("Data directory path:", dataDir);
 
 fs.readdir(dataDir, (err, files) => {
   if (err) {
-    console.error("Error reading data directory.");
+    console.error("Error reading data directory. Error:", err.message);
     process.exit(1);
   } else {
     const jsonFiles = files.filter((file) => file.startsWith("jobs_") && file.endsWith(".json"));
