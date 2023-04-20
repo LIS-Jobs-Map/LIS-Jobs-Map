@@ -31,12 +31,11 @@ jobs:
         working-directory: ./
 
       - name: Deploy to GitHub Pages
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout --orphan gh-pages
-          git add data
-          git commit -m "Deploy to GitHub Pages"
-          git push https://${GITHUB_TOKEN}@github.com/cmurgu/mapping-jobs.git gh-pages --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./data
+          force_orphan: true
+          user_name: 'GitHub Action'
+          user_email: 'action@github.com'
+          branch: gh-pages
