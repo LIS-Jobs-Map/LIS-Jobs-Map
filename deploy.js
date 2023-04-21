@@ -12,7 +12,7 @@ try {
   execSync('git checkout --orphan gh-pages');
   execSync('git add .');
   execSync('git commit -m "Deploy to GitHub Pages"');
-  execSync(`git push https://${GITHUB_TOKEN}@github.com/cmurgu/mapping-jobs.git gh-pages --force`);
+  execSync(`git push https://${GITHUB_TOKEN}@github.com/LIS-Jobs-Map/LIS-Jobs-Map.git gh-pages --force`);
 
   console.log('Successfully deployed to GitHub Pages');
 } catch (error) {
