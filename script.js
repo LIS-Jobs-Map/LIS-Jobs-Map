@@ -67,14 +67,14 @@ async function addMarker(job) {
     const lngLat = data.features[0].center;
 
     const popupContent = `
-      <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
-      <p>Organization: ${job.organization}</p>
-      <p>Location: ${job.location}</p>
-      <p>Opened: ${job.opened}</p>
-      <p>Closes: ${job.closes}</p>
-      <p>Salary: ${job.salary}</p>
-      ${job.summary ? `<p>Summary: ${job.summary}</p>` : ""}
-    `;
+  <h5><a href="${encodeURI(job.url)}" target="_blank">${job.position}</a></h5>
+  <p>Organization: ${job.organization}</p>
+  <p>Location: ${job.location}</p>
+  <p>Opened: ${job.opened}</p>
+  <p>Closes: ${job.closes}</p>
+  <p>Salary: ${job.salary}</p>
+  ${job.summary ? `<p>Summary: ${job.summary}</p>` : ""}
+`;
 
     const popup = new mapboxgl.Popup({ className: "job-popup" })
       .setHTML(popupContent);
@@ -106,8 +106,8 @@ async function addMarker(job) {
           <p>Location: ${job.location}</p>
           <p>Opened: ${job.opened}</p>
           <p>Closes: ${job.closes}</p>
-          <p>Salary: ${job.salary.salary}</p>         
-          <p>Summary: ${job.jobDescription}</p>
+          <p>Salary: ${job.salary}</p>         
+          <a href="analyze.html?jobDescription=${encodeURIComponent(job.jobDescription)}" class="btn btn-warning">Analyze</a>
         `;
         popup.setHTML(updatedPopupContent);
       }
