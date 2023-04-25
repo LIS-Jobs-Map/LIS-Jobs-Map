@@ -156,8 +156,14 @@
       <div class="row justify-content-center">
         <div id="chart"></div>
       </div>
-
-      <canvas id="jobChart" width="400" height="200"></canvas>
+      <select id="intervalSelector">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+      <canvas id="jobChart" width="400" height="200">
+      </canvas>
 
     <script src="app.js"></script>
   </div>

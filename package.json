@@ -21,7 +21,10 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "cheerio": "^1.0.0-rc.10",
     "date-fns": "^2.29.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "micro": "^10.0.1",
+    "openai": "^3.2.1",
+    "stream": "^0.0.2"
   },
   "devDependencies": {
     "gh-pages": "^5.0.0"
