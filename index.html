@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js" integrity="sha512-V0j9LhrK9IMNdFYZqh+IqU4cjo7wdxyHNyH+L0td4HryBuZ7Oq6QxP2/CWr6TituX31+gv5PnolvERuTbz8UNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" crossorigin="anonymous">
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+    <link rel='stylesheet' href='style.css' type='text/css' />
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoiY211cmd1MTk5MiIsImEiOiJja3V5YnY1bGUwNHFuMm9waDZuNXJtN2x1In0.WldL-7h0Yj1KFli7rxuGEw';
+    </script>
+  </head>
+  <body>
+
+    <div id="map">
+      <div id="job-count-container">
+        <span id="job-count">0</span> Jobs
+        <div id="loading-spinner"></div>
+      </div>
+    </div>
+    
+    <div id="controls" class="text-center"><br>
+      <h3>Filter</h3>
+      <!-- this is the first filter -->
+      <div id="search-container">
+        <input type="text" id="search-input" placeholder="Search jobs..." />
+        <button class="btn btn-info" id="search-btn">Search <i class="fas fa-search"></i></button>
+      </div>
+      <br>
+      <div class="btn-group">
+        <button class="btn btn-info dropdown-toggle" type="button" id="filterByPlaceBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          By Place
+        </button>
+        <div class="dropdown-menu" aria-labelledby="filterByPlaceBtn">
+          <li>
+            <label for="AB">Alberta</label>
+            <input class="dropdown-item" type="checkbox" value="AB" id="AB">
+          </li>
+          <li>
+            <label for="BC">British Columbia</label>
+            <input class="dropdown-item" type="checkbox" value="BC" id="BC">
+          </li>
+          <li>
+            <label for="MB">Manitoba</label>
+            <input class="dropdown-item" type="checkbox" value="MB" id="MB">
+          </li>
+          <li>
+            <label for="NB">New Brunswick</label>
+            <input class="dropdown-item" type="checkbox" value="NB" id="NB">
+          </li>
+          <li>
+            <label for="NL">Newfoundland & Labrador</label>
+            <input class="dropdown-item" type="checkbox" value="NL" id="NL">
+          </li>
+          <li>
+            <label for="NT">NWT</label>
+            <input class="dropdown-item" type="checkbox" value="NT" id="NT">
+          </li>
+          <li>
+            <label for="NS">Nova Scotia</label>
+            <input class="dropdown-item" type="checkbox" value="NS" id="NS">
+          </li>
+          <li>
+            <label for="NU">Nunavut</label>
+            <input class="dropdown-item" type="checkbox" value="NU" id="NU">
+          <li>
+            <label for="ON">Ontario</label>
+            <input class="dropdown-item" type="checkbox" value="ON" id="ON"> 
+          </li>
+          <li>
+            <label for="PE">PEI</label>
+            <input class="dropdown-item" type="checkbox" value="PE" id="PE">
+          </li>
+          <li>
+            <label for="QC">Quebec</label>
+            <input class="dropdown-item" type="checkbox" value="QC" id="QC"> 
+          </li>
+          <li>
+            <label for="SK">Saskatchewan</label>
+            <input class="dropdown-item" type="checkbox" value="SK" id="SK"> 
+          </li>
+          <li>
+            <label for="YT">Yukon</label>
+            <input class="dropdown-item" type="checkbox" value="YT" id="YT"> 
+          </li>
+          <li>
+            <label for="Other">Other</label>
+            <input class="dropdown-item" type="checkbox" value="Other" id="Other"> 
+          </li>
+      </div>
+    </div>
+      <!-- this is the 2nd filter -->
+      <div class="btn-group">
+        <button class="btn btn-info dropdown-toggle" type="button" id="filterByTypeBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          By Type
+        </button>
+        <div class="dropdown-menu" aria-labelledby="filterByTypeBtn">
+          <li>
+            <label for="Academic">Academic</label>
+            <input class="dropdown-item" type="checkbox" value="Academic" id="Academic">
+          </li>
+          <li>
+            <label for="Public">Public</label>
+            <input class="dropdown-item" type="checkbox" value="Public" id="Public">
+          </li>
+          <li>
+            <label for="Private">Private</label>
+            <input class="dropdown-item" type="checkbox" value="Private" id="Private">
+          </li>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-info" id="closing-soon-btn">Closing Soon</button>
+
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-info dropdown-toggle" type="button" id="salary-filter-btn">By Salary</button>
+        <div id="salary-slider-container">
+          <input type="range" id="salary-slider" min="0" max="100000" step="5000" value="0">
+          <div id="salary-slider-value"></div>
+        </div>
+        </div>
+      <div class="btn-group">
+        <button class="btn btn-danger" type="button" id="clear-filters-btn">Clear</button>
+        </div>
+<script>
+  $(document).ready(function() {
+    $("#salary-filter-btn").click(function() {
+      $("#salary-slider-container").toggle();
+    });
+  });
+</script>
+
+    </div>
+    <div class="container mt-4">
+      <h1 class="text-center">Partnership Jobs 💼</h1>
+      <p class="text-center">
+        Welcome to the Partnership Jobs map. This project displays job opportunities in the library and information field across Canada. The job data is scraped from partnershipjobs.ca regularly, and presented here in an interactive map format. Click on the markers to view more information about each job posting and visit their respective links for further details.
+      </p>
+    </div>
+    <div class="container mt-4">
+      <h1 class="text-center">Jobs Over Time 🗓️</h1>
+      <div class="row justify-content-center">
+        <div id="chart"></div>
+      </div>
+      <select id="intervalSelector" class="btn-info dropdown-toggle">
+        <option class="btn-info" value="daily">Daily</option>
+        <option class="btn-info" value="weekly">Weekly</option>
+        <option class="btn-info" value="monthly">Monthly</option>
+        <option class="btn-info" value="yearly">Yearly</option>
+      </select>
+      <canvas id="jobChart" width="400" height="200">
+      </canvas>
+
+    <script src="app.js"></script>
+  </div>
+
+
+
+    <div class="container">
+      <h1 class="text-center">Project Roadmap</h1>
+      <div class="row justify-content-center">
+        <div class="col-md-3">
+          <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Filter jobs by various criteria">
+            <div class="card-body rmf-done">
+              <i class="fas fa-filter fa-4x mb-3"></i>
+              <h5 class="card-title">Filtering</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="See salary information for each job">
+            <div class="card-body rmf-process">
+              <i class="fas fa-dollar-sign fa-4x mb-3"></i>
+              <h5 class="card-title">Salary Information</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Analyze job descriptions for keywords and requirements using OpenAI LLM">
+            <div class="card-body rmf-process">
+              <i class="fas fa-file-alt fa-4x mb-3"></i>
+              <h5 class="card-title">🤖 Job Analysis</h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card text-center my-3" data-toggle="tooltip" data-placement="top" title="Daily, monthly, and yearly tracking of jobs in information and library science in Canada">
+            <div class="card-body rmf-process">
+              <i class="fas fa-bar-chart fa-4x mb-3"></i>
+              <h5 class="card-title">Historical Job Tracking</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container my-5">
+      <h2 class="text-center mb-4">Data</h2>
+      <div class="row">
+        <div class="col text-center">
+          <a href="jobs.json" id="downloadBtn" class="btn btn-info">Download</a>
+        </div>
+      </div>
+    </div>
+    <div class="container my-5">
+      <h2 class="text-center mb-4">Why?</h2>
+      <div class="row">
+        <div class="col text-center">
+        <p>Just an interested fella' looking to build an app using ChatGPT prompts 🤖. More of my work <a href="https://calmurgu.com">here.</a></p>
+      </div>
+    </div>
+    
+    
+    <script type="module" src="script.js"></script>
+
+    <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+      });
+    </script>
+  </body>
+</html>

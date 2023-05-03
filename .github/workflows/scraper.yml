@@ -1,0 +1,36 @@
+name: Scrape Jobs and Deploy
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Print Node.js version
+        run: node --version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Scrape jobs
+        run: node scraper.js
+
+      - name: Update fileList.json
+        run: node updateFileList.js
+        working-directory: ./
+
+      - name: Deploy to GitHub Pages
+        run: node deploy.js
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
