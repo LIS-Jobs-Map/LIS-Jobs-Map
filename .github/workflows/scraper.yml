@@ -23,6 +23,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Checkout gh-pages branch
+        run: |
+          git fetch origin gh-pages
+          git checkout -B gh-pages FETCH_HEAD
+
       - name: Scrape jobs
         run: node scraper.js
 
