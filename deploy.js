@@ -9,7 +9,17 @@ if (!GITHUB_TOKEN) {
 try {
   execSync('git config --local user.email "action@github.com"');
   execSync('git config --local user.name "GitHub Action"');
-  execSync('git checkout --orphan gh-pages');
+
+  // Check if the gh-pages branch exists and create it if necessary
+  try {
+    execSync('git rev-parse --verify gh-pages');
+    console.log('gh-pages branch exists. Checking it out.');
+    execSync('git checkout gh-pages');
+  } catch (error) {
+    console.log('gh-pages branch does not exist. Creating it as an orphan branch.');
+    execSync('git checkout --orphan gh-pages');
+  }
+
   execSync('git add .');
   execSync('git commit -m "Deploy to GitHub Pages"');
   execSync(`git push https://${GITHUB_TOKEN}@github.com/LIS-Jobs-Map/LIS-Jobs-Map.git gh-pages --force`);
