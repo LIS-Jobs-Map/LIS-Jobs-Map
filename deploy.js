@@ -15,12 +15,8 @@ try {
     execSync('git checkout gh-pages');
     console.log('gh-pages branch exists. Checking it out.');
   } catch (error) {
-    console.log('gh-pages branch does not exist. Creating it and setting the branch.');
-    execSync('git checkout --orphan gh-pages');
-    execSync('git rm -rf .');
-    execSync('git clean -fdx');
-    execSync('git commit --allow-empty -m "Initialize gh-pages branch"');
-    execSync(`git push https://${GITHUB_TOKEN}@github.com/LIS-Jobs-Map/LIS-Jobs-Map.git gh-pages`);
+    console.log('gh-pages branch does not exist. Creating it.');
+    execSync('git checkout -b gh-pages');
   }
 
   execSync('git add .');
