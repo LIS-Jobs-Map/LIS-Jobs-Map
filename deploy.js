@@ -10,7 +10,7 @@ try {
   execSync('git config --local user.email "action@github.com"');
   execSync('git config --local user.name "GitHub Action"');
 
-  // Check if the gh-pages branch exists and create it if necessary
+  // Check if the gh-pages branch exists and switch to it
   try {
     execSync('git checkout gh-pages');
     console.log('gh-pages branch exists. Checking it out.');
@@ -19,6 +19,8 @@ try {
     execSync('git checkout --orphan gh-pages');
     execSync('git rm -rf .');
     execSync('git clean -fdx');
+    execSync('git commit --allow-empty -m "Initialize gh-pages branch"');
+    execSync(`git push https://${GITHUB_TOKEN}@github.com/LIS-Jobs-Map/LIS-Jobs-Map.git gh-pages`);
   }
 
   execSync('git add .');
