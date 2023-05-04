@@ -10,12 +10,12 @@ try {
   execSync('git config --local user.email "action@github.com"');
   execSync('git config --local user.name "GitHub Action"');
 
-  // Check if the gh-pages branch exists and create it if necessary
-  try {
-    execSync('git rev-parse --verify gh-pages');
+  // Check if the gh-pages branch exists and switch to it
+  const branchExists = execSync('git branch --list gh-pages', { encoding: 'utf-8' }).trim().length > 0;
+  if (branchExists) {
     console.log('gh-pages branch exists. Checking it out.');
     execSync('git checkout gh-pages');
-  } catch (error) {
+  } else {
     console.log('gh-pages branch does not exist. Creating it as an orphan branch.');
     execSync('git checkout --orphan gh-pages');
   }
