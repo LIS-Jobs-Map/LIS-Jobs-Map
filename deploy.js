@@ -12,12 +12,13 @@ try {
 
   // Check if the gh-pages branch exists and create it if necessary
   try {
-    execSync('git rev-parse --verify gh-pages');
-    console.log('gh-pages branch exists. Checking it out.');
     execSync('git checkout gh-pages');
+    console.log('gh-pages branch exists. Checking it out.');
   } catch (error) {
-    console.log('gh-pages branch does not exist. Creating it as an orphan branch.');
+    console.log('gh-pages branch does not exist. Creating it and setting the branch.');
     execSync('git checkout --orphan gh-pages');
+    execSync('git rm -rf .');
+    execSync('git clean -fdx');
   }
 
   execSync('git add .');
