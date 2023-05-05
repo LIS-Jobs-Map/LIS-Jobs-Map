@@ -19,32 +19,35 @@ async function getJobDetails(url) {
     const bodyTextWithoutTags = bodyHTML.replace(/<[^>]*>/g, '');
     jobDescription = bodyTextWithoutTags.replace(/\s\s+/g, ' ').trim();    
     const compensationText = $('body').text();
-    const compensationRegex = /(compensation|salary)[\s\S]*?(\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?[-\s]*?(?:\d{1,3}(?:,\d{3})*(?:\.\d{2})?)?)\s*(hourly|per hour)?/i;
-    const match = compensationText.match(compensationRegex);
+
+    const patterns = [
+      /(compensation|salary|pay)[:\s]*\$?\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/i,
+      /(compensation|salary|pay)[:\s]*up to\s*(\d{1,3}(?:,\d{3})?)/i,
+      /(compensation|salary|pay)[:\s]*(\d{2,3}\.\d{2}\s*-\s*\d{2,3}\.\d{2})/i,
+      /(compensation|salary|pay)[:\s]*starting at\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*per hour/i,
+      /(compensation|salary|pay)[:\s]*between\s*(\d{1,3}(?:,\d{3})?)\s*and\s*(\d{1,3}(?:,\d{3})?)/i
+    ];
+
+    let match = null;
+    for (const pattern of patterns) {
+      match = compensationText.match(pattern);
+      if (match) {
+        salary = match[2];
+        break;
+      }
+    }
 
     if (match) {
-      salary = match[2];
-      const isHourly = match[3] && match[3].toLowerCase().includes('hour');
+      salary = salary.replace(/\$/, ''); // Remove the dollar sign from the salary value
+      const hourlyPattern = /^(\d{1,3}(?:\.\d{2})?)$/;
+      const hourlyMatch = salary.match(hourlyPattern);
 
-      if (isHourly) {
-        const hourlyWage = parseFloat(salary.replace(/[$,]/g, ''));
-        const annualWage = hourlyWage * 1680; // 1680 hours per year
-        salary = `$${annualWage.toFixed(2)}`;
+      if (hourlyMatch) {
+        const hourlyRate = parseFloat(hourlyMatch[1]);
+        const annualSalary = hourlyRate * 40 * 52;
+        salary = `$${annualSalary.toFixed(2)}`;
       } else {
-        const numberRegex = /\d{1,3}(?:,\d{3})*(?:\.\d{2})?/;
-        const salaryNumbers = salary.match(numberRegex);
-
-        if (salaryNumbers && salaryNumbers.length > 0) {
-          const rawSalary = parseFloat(salaryNumbers[0].replace(/,/g, ''));
-
-          if (/^\d{4}$/.test(salaryNumbers[0])) { // 4 digits without a period (####)
-            salary = `$${(rawSalary * 52).toFixed(2)}`;
-          } else if (/^\d{2}\.\d{2}$/.test(salaryNumbers[0])) { // 4 numbers separated by a period (##.##)
-            salary = `$${(rawSalary * 1700).toFixed(2)}`;
-          } else if (/^\d{5,6}$/.test(salaryNumbers[0])) { // 5-digit and 6-digit numbers
-            salary = `$${rawSalary.toFixed(2)}`;
-          }
-        }
+        salary = `$${salary}`;
       }
     }
   } catch (error) {
@@ -56,6 +59,7 @@ async function getJobDetails(url) {
     jobDescription: jobDescription,
   };
 }
+
 
 function getTimestampedFilename() {
   const date = new Date();
