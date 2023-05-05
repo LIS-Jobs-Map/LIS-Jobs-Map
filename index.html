@@ -27,19 +27,25 @@
     </script>
   </head>
   <body>
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-	Our automated Github action is giving us grief right now, so jobs aren't being updated. We're working on a fix!
-	<button type="button" class="close" data-dismiss="alert" aria-label="close">
-		<span aria-hidden="true">×</span>
-	</button>
-</div>
     <div id="map">
       <div id="job-count-container">
         <span id="job-count">0</span> Jobs
         <div id="loading-spinner"></div>
       </div>
     </div>
-    
+    <br>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
+            Our automated Github action is giving us grief right now, so jobs aren't being updated consistently. We're working on a fix!
+            <button type="button" class="close" data-dismiss="alert" aria-label="close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="controls" class="text-center"><br>
       <h3>Filter</h3>
       <!-- this is the first filter -->
