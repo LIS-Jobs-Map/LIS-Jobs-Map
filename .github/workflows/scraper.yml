@@ -1,41 +1,45 @@
-name: Scrape and Update File List
+name: Daily Scraper and Deployment
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *' # Run the workflow every day at 00:00 UTC
+    - cron: "0 0 * * *"
 
 jobs:
-  scrape_and_update:
+  scrape_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repository
+    - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        ref: main
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: 16
+        node-version: 14
 
     - name: Install dependencies
       run: npm ci
 
-    - name: Run scraper.js script
+    - name: Run scraper.js
       run: node scraper.js
 
-    - name: Run updateFileList.js script
+    - name: Run updateFileList.js
       run: node updateFileList.js
 
     - name: Commit and push changes
       run: |
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"
-        git add data/*
-        git commit -m "Update job data and file list"
+        git add .
+        git commit -m "Updated job data and file list"
         git push
 
     - name: Deploy to GitHub Pages
-      run: node deploy.js
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        publish_branch: gh-pages
