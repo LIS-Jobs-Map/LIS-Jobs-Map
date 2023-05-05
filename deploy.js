@@ -49,7 +49,7 @@ try {
 
   // Force push to the gh-pages branch
   execSync(
-    `git push --force --quiet "https://${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git" master:gh-pages`,
+    `git push --force --quiet "https://${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git" main:gh-pages`,
     { cwd: buildDir }
   );
 
