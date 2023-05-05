@@ -1,31 +1,61 @@
-const { execSync } = require('child_process');
-const { GITHUB_TOKEN } = process.env;
+const { execSync } = require("child_process");
+const path = require("path");
+const fs = require("fs");
 
-if (!GITHUB_TOKEN) {
-  console.error('GITHUB_TOKEN environment variable is not set');
+// Check if the GITHUB_TOKEN is set
+if (!process.env.GITHUB_TOKEN) {
+  console.error("GITHUB_TOKEN not found in environment variables.");
   process.exit(1);
 }
 
-try {
-  execSync('git config --local user.email "action@github.com"');
-  execSync('git config --local user.name "GitHub Action"');
+const buildDir = path.join(__dirname, "build");
+const dataDir = path.join(__dirname, "data");
 
-  // Check if the gh-pages branch exists and switch to it
-  const branchExists = execSync('git branch --list gh-pages', { encoding: 'utf-8' }).trim().length > 0;
-  if (branchExists) {
-    console.log('gh-pages branch exists. Checking it out.');
-    execSync('git checkout gh-pages');
-  } else {
-    console.log('gh-pages branch does not exist. Creating it as an orphan branch.');
-    execSync('git checkout --orphan gh-pages');
+// Make sure the build directory exists
+if (!fs.existsSync(buildDir)) {
+  fs.mkdirSync(buildDir);
+}
+
+// Copy the data directory and its contents to the build directory
+fs.copyFileSync(dataDir, path.join(buildDir, "data"), (err) => {
+  if (err) {
+    console.error("Error while copying data directory:", err.message);
+    process.exit(1);
   }
+});
 
-  execSync('git add .');
-  execSync('git commit -m "Deploy to GitHub Pages"');
-  execSync(`git push https://${GITHUB_TOKEN}@github.com/LIS-Jobs-Map/LIS-Jobs-Map.git gh-pages --force`);
+// Copy the index.html file to the build directory
+fs.copyFileSync(
+  path.join(__dirname, "index.html"),
+  path.join(buildDir, "index.html"),
+  (err) => {
+    if (err) {
+      console.error("Error while copying index.html:", err.message);
+      process.exit(1);
+    }
+  }
+);
 
-  console.log('Successfully deployed to GitHub Pages');
+try {
+  // Initialize a new Git repository in the build directory
+  execSync("git init", { cwd: buildDir });
+
+  // Configure Git in the build directory
+  execSync(`git config user.name "GitHub Actions Bot"`, { cwd: buildDir });
+  execSync(`git config user.email "actions@github.com"`, { cwd: buildDir });
+
+  // Add, commit, and push the changes
+  execSync("git add .", { cwd: buildDir });
+  execSync('git commit -m "Deploy to GitHub Pages"', { cwd: buildDir });
+
+  // Force push to the gh-pages branch
+  execSync(
+    `git push --force --quiet "https://${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git" master:gh-pages`,
+    { cwd: buildDir }
+  );
+
+  console.log("Deployed successfully to GitHub Pages.");
 } catch (error) {
-  console.error('Failed to deploy to GitHub Pages:', error);
+  console.error("Error while deploying:", error.message);
   process.exit(1);
 }
