@@ -25,16 +25,15 @@ fs.copy(dataDir, path.join(buildDir, "data"), (err) => {
 });
 
 // Copy the index.html file to the build directory
-fs.copyFileSync(
-  path.join(__dirname, "index.html"),
-  path.join(buildDir, "index.html"),
-  (err) => {
-    if (err) {
-      console.error("Error while copying index.html:", err.message);
-      process.exit(1);
-    }
-  }
-);
+try {
+  fs.copyFileSync(
+    path.join(__dirname, "index.html"),
+    path.join(buildDir, "index.html")
+  );
+} catch (err) {
+  console.error("Error while copying index.html:", err.message);
+  process.exit(1);
+}
 
 try {
   // Initialize a new Git repository in the build directory
