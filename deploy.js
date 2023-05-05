@@ -1,6 +1,6 @@
 const { execSync } = require("child_process");
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs-extra");
 
 // Check if the GITHUB_TOKEN is set
 if (!process.env.GITHUB_TOKEN) {
@@ -17,7 +17,7 @@ if (!fs.existsSync(buildDir)) {
 }
 
 // Copy the data directory and its contents to the build directory
-fs.copyFileSync(dataDir, path.join(buildDir, "data"), (err) => {
+fs.copy(dataDir, path.join(buildDir, "data"), (err) => {
   if (err) {
     console.error("Error while copying data directory:", err.message);
     process.exit(1);
