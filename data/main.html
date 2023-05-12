@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>JSON Files</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">JSON Files</h1>
+        <div class="mt-4">
+          <p>Please note that the earliest scrape is 20230417.</p>
+            <label for="datePicker">Select a date:</label>
+            <input type="date" id="datePicker">
+            <button id="downloadDate" class="btn btn-primary">Download</button>
+        </div>
+        <div id="fileList" class="mt-4"></div>
+        <button id="downloadAll" class="btn btn-primary mt-4">Download All</button>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
