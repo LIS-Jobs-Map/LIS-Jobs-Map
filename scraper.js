@@ -21,11 +21,33 @@ async function getJobDetails(url) {
     const compensationText = $('body').text();
 
     const patterns = [
-      /(compensation|salary|pay)[:\s]*\$?\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/i,
-      /(compensation|salary|pay)[:\s]*up to\s*(\d{1,3}(?:,\d{3})?)/i,
-      /(compensation|salary|pay)[:\s]*(\d{2,3}\.\d{2}\s*-\s*\d{2,3}\.\d{2})/i,
-      /(compensation|salary|pay)[:\s]*starting at\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*per hour/i,
-      /(compensation|salary|pay)[:\s]*between\s*(\d{1,3}(?:,\d{3})?)\s*and\s*(\d{1,3}(?:,\d{3})?)/i
+      /(?:Compensation|Salary|Pay)[:\s]*\$?\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // $30.41 per hour
+      /(?:Compensation|Salary|Pay)[:\s]*Up to\s*(\d{1,3}(?:,\d{3})?)/,  // Up to $73,599
+      /(?:Compensation|Salary|Pay)[:\s]*(\d{2,3}\.\d{2}\s*-\s*\d{2,3}\.\d{2})/,  // $61,204 to $85,514 per year
+      /(?:Compensation|Salary|Pay)[:\s]*Starting at\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*per hour/,  // Starting at $30.41 per hour
+      /(?:Compensation|Salary|Pay)[:\s]*Between\s*(\d{1,3}(?:,\d{3})?)\s*and\s*(\d{1,3}(?:,\d{3})?)/,  // $121,166 - $144,309
+      /(?:Salary|Pay)[:\s]*Over\s*\$?(\d{1,3}(?:,\d{3})*)/,  // Over $100K
+      /\b(\d{1,3}(?:,\d{3})?)\s*(?:à|to)\s*(\d{1,3}(?:,\d{3})?)\s*\$/,  // 61 204 à 85 514 $
+      /(?:Salary Range|Hiring Range)[:\s]*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // Salary Range: $928.59/weekly
+      /(?:Salary Range|Hiring Range)[:\s]*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*-\s*\$?(\d{1,3}(?:,\d{3}))*(?:\.\d{2})?/,  // $928.59/weekly - $1075.07/weekly
+      /(\d{1,3}(?:,\d{3})?)\s*[kK]/,  // 75k or 90k
+      /Hourly range:\s*\$?(\d{1,3}(?:\.\d{2})?)\s*-\s*\$?(\d{1,3}(?:\.\d{2})?)/,  // Hourly range: $20.17 - $31.70
+      /Minimum:\s*Lib III\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*Lib IV\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // Minimum: Lib III $94,466 Lib IV $111,305
+      /Salary RangeFrom\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*to\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*per annum/,  // Salary RangeFrom $88,379 to $104,312 per annum
+      // Previous patterns...
+      /Minimum salary: LIB III:\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?);\s*LIB IV:\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // Minimum salary: LIB III: $95,411; LIB IV: $112,418
+      /Compensation Starting\s*\$?\s*(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // Compensation Starting $ 60,000
+      /Compensation Classification\s*\d+,\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*-\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // Compensation Classification 8, $24,232.39 - $24,981.84
+      /Compensation Salary range for Librarians is\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*to\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // Compensation Salary range for Librarians is $78,446 to $128,875
+      /salary range is between\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*and\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // salary range is between $59,670 and $71,400
+      /\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*-\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // $85,904 - $103,667
+      /\$?(\d{1,3}(?:\.\d{2})?)/,  // $21.69
+      /The salary range for this position begins at\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // The salary range for this position begins at $69,542
+      /\$?(\d{1,3}(?:\.\d{2})?)\s*-\s*\$?(\d{1,3}(?:\.\d{2})?)\s*per hour/,  // $34.96 - $41.16 per hour
+      /Compensation From\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*to\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)\s*bi-weekly/,  // Compensation From $1,732 to $2,418 bi-weekly
+      /position starts at\s*\$?(\d{1,3}(?:\.\d{2})?)/,  // position starts at $27.43
+      /Compensation Minimum salary: LIB I:\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?);\s*LIB II:\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?);\s*LIB III:\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/,  // Compensation Minimum salary: LIB I: $71,451; LIB II: $74,553; LIB III: $95,411
+      /Full-Time Pay Scale Group & Hiring Zone: [^\n]+\s*-\s*Step \d:\s*\$?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/  // Full-Time Pay Scale Group & Hiring Zone: CUPE 1230 (4U) - Step 1: $65,477
     ];
 
     let match = null;
